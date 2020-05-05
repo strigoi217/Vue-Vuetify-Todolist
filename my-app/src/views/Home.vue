@@ -45,6 +45,9 @@ export default {
       'todos': 'todostore/todosgetters'
     }),
   },
+  created () {
+    this.$store.dispatch('todostore/getTodo');
+  }
 };
 </script>
 

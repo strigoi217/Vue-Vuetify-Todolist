@@ -8,8 +8,8 @@
     <v-icon v-on:click="openForm" v-show="!isCreating" x-large>mdi-plus</v-icon>
     <v-card class="mx-auto card-mb" max-width="400" outlined d-block v-show="isCreating">
       <div class="content">
-        <v-text-field label="Title" v-model="titleText"></v-text-field>
-        <v-text-field label="Project" v-model="projectText"></v-text-field>
+        <v-text-field type="text" label="Title" v-model="titleText" name="title"></v-text-field>
+        <v-text-field type="text" label="Project" v-model="projectText" name="project"></v-text-field> 
       </div>
       <div class="btn-mb">
         <v-btn v-on:click="sendForm">
@@ -49,7 +49,6 @@ export default {
       this.isCreating = false;
     },
     sendForm() {
-      console.log('this.store', this)
       if (this.validateData() === true) {
         const todos = {
           title: this.titleText,

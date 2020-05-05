@@ -26,7 +26,7 @@
               <v-text-field label="Project" v-model="todo.project">{{ todo.project }}</v-text-field>
           </div>
           <div class="ui two button attached buttons">
-              <v-btn v-on:click="hideForm">
+              <v-btn v-on:click="hideForm(todo.title, todo.project, todo._id )">
                   Close X
               </v-btn>
           </div>
@@ -75,13 +75,16 @@ export default {
     return {
       isEditing: false,
       dialog: false,
+      newTitle:'',
+      newProject:''
     };
   },
   methods: {
     showForm() {
       this.isEditing = true;
     },
-    hideForm() {
+    hideForm(newTitle, newProject, id) {
+      this.$store.dispatch('todostore/editTodo', {title:newTitle, project:newProject, id: id})
       this.isEditing = false;
     },
     deleteTodo(todo) {

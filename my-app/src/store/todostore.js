@@ -1,46 +1,23 @@
+import api from '../utils/http'
 export const todostore = {
     namespaced: true,
     state: {
-      todos: [
-        {
-            title: "Todo A",
-            project: "Project A",
-            done: false
-        },
-        {
-            title: "Todo B",
-            project: "Project B",
-            done: true
-        },
-        {
-            title: "Todo C",
-            project: "Project C",
-            done: false
-        },
-        {
-            title: "Todo D",
-            project: "Project D",
-            done: false
-        }
-      ],
+      todos: [],
       newTodo: ''
     },
     mutations: {
       GET_TODO(state, todo){
-        state.newTodo = todo
+        state.todos = todo
       },
       ADD_TODO(state, todo) {
-        state.todos.push({
-            title: todo.title,
-            project: todo.project,
-            done: todo.done
-        })
+        state.todos = [...state.todos, todo]
       },
       EDIT_TODO(state, todo){
-         var todos = state.todos
-         todos.splice(todos.indexOf(todo), 1)
-         state.todos = todos
-         state.newTodo = todo.body
+        state.todos = []
+        console.log('todo', todo)
+        todo.map(item => {
+          state.todos.push(item)
+        })
       },
       REMOVE_TODO(state, todo){
          var todos = state.todos
@@ -51,19 +28,31 @@ export const todostore = {
       }
      },
     actions: {
-      getTodo({commit}, todo){
-        commit('GET_TODO', todo)
+      getTodo({commit}){
+        api.get("/todos/list").then(response => {
+          commit('GET_TODO', response.data);
+        }).catch(error => {
+          throw new Error(`API ${error}`);
+        });
       },
-      addTodo({commit}, todo){
-          console.log('addTodo')
-
-        commit('ADD_TODO', todo)
+      addTodo({commit}, todo) {
+        api.post('/todos/create', todo)
+          .then(response => {
+            commit('ADD_TODO', response.data)
+          })
       },
       editTodo({commit}, todo){
-        commit('EDIT_TODO', todo)
+        console.log('todoupdate',todo)
+        api.put("/todos/update/"+ todo.id, todo).then(response => {
+          console.log('update', response)
+          commit('EDIT_TODO', response.data)
+        });
       },
       removeTodo({commit}, todo){
-        commit('REMOVE_TODO', todo)
+        api.delete("/todos/delete/"+todo._id).then(response => {
+          console.log('delete', response)
+          commit('REMOVE_TODO', todo)
+        });
       },
       completeTodo({commit}, todo){
        commit('COMPLETE_TODO', todo)
@@ -71,7 +60,6 @@ export const todostore = {
     },
     getters: {
         todosgetters(state) {
-            console.log(state.todos)
             return state.todos;
         }
     }
